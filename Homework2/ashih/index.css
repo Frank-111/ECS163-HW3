@@ -1,0 +1,44 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.details-container {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+}
+
+.map-container {
+    width: 60%;
+    height: 100%;
+    background-color: bisque;
+}
+
+.histogram-container, .parallel-container {
+    height: 50%;
+    border-bottom: solid 1px black;
+}
