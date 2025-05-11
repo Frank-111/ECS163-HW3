@@ -28,20 +28,20 @@ svg {
 }
 
 .details-container {
-    width: 40%;
+    width: 35%;
     display: flex;
     flex-direction: column;
 }
 
 .map-container {
-    width: 60%;
+    width: 65%;
     height: 100%;
     border-right: solid 1px black;
 }
 
 .histogram-container, .parallel-container {
     height: 50%;
-    padding: 24px;
+    padding: 16px;
 }
 
 .histogram-container {
