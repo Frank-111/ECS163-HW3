@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music & Mental Health Insights Dashboard</title>
+
+  <!-- D3.js and D3-Sankey libraries -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: black;
+      color: #C3B7F7;
+      font-family: sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      color: #C3B7F7;
+    }
+
+    .dashboard-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .chart-container {
+      background-color: black;
+      margin: 10px;
+    }
+
+    svg {
+      border: 2px solid #C3B7F7;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Music & Mental Health Insights Dashboard</h1>
+
+  <!-- Layout: left = bar & scatter, right = sankey -->
+  <div class="dashboard-layout">
+    <div class="left-column">
+      <div id="bar-chart" class="chart-container"></div>
+      <div id="scatter-plot" class="chart-container"></div>
+    </div>
+    <div id="sankey-diagram" class="chart-container"></div>
+  </div>
+
+  <!-- Dashboard.js script -->
+  <script src="dashboard.js"></script>
+</body>
+</html>
