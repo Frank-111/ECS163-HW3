@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        table {
+            width: 100%;
+            /* border: 1px solid black; */
+        }
+
+        h1 {
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+<body>
+    <table>
+        <tr>
+            <td></td>
+            <h1>Number of Pokemons of Each Type</h1>
+            </td>
+        </tr>
+        <tr>
+            <td> <svg id="graph1"></svg>
+                <hr />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1>Average of max{Attack, Sp_Atk} for Each Generation</h1>
+            </td>
+        </tr>
+        <tr>
+            <td> <svg id="graph2"></svg>
+                <hr />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1>6 Parameteres of my 10 Favorate Pokemons</h1>
+            </td>
+        </tr>
+        <tr>
+            <td> <svg id="graph3"></svg>
+                <hr />
+            </td>
+        </tr>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script>
+        "use strict";
+
+        /**
+        * This function is used for draw a pie graph.
+        * @param {data} a list of dictionary, each of dictionary contains at least 2 keys: 
+        *    - name: string
+        *    - value: Number
+        * @param {svg_id} id of svg.
+        * @param {width} canvas height
+        * @param {height} canvas height
+        * @returns none.
+        */
+        function drawPie(data, svg_id, width, height) {
+
+            // console.log(window.innerWidth);
+            // console.log(window.innerHeight);
+
+            // create a pie according to value field of data
+            const arcs_unsorted = d3.pie().value(d => d.value)(data);
+
+            // sort the pie data according to value field in increasing order.
+            const arcs = d3.sort(arcs_unsorted);
+
+            // add `arc_data` and `centroid` info
+            arcs.forEach(d => {
+                // create an arc generator, used for generate arc data of each pie
+                const fmap = d3.arc()
+                    .padAngle(0.05)
+                    .innerRadius(10)
+                    .outerRadius(Math.min(width, height) / 2 - 50)
+                    .startAngle(d.startAngle)
+                    .endAngle(d.endAngle);
+                d['arc_data'] = fmap();
+                d['centroid'] = fmap.centroid();
+            })
+
+            // Create SVG
+            const svg = d3.select(svg_id)
+                .attr("width", width)
+                .attr("height", height)
+                .attr("viewBox", [0, 0, width, height])
+                .attr("style", "max-width: 100%; height: auto;");
+
+            // use build-in color scheme: `schemeCategory10` and `schemePastel1` draw the pie
+            const colors = d3.schemeCategory10.concat(d3.schemePastel1);
+
+            // create a group, move to center of canvas
+            // fill the group with arc.
+            svg
+                .append("g")
+                .attr("transform", `translate(${width / 2}, ${height / 2})`) // move to center of canvas
+                .selectAll('path')
+                .data(arcs)
+                .join('path')
+                .attr('d', (d) => d['arc_data'])
+                .attr('fill', (d, i) => colors[i])
+                .attr('stroke', "black")
+                .attr('stroke-width', "2")
+
+            // append text for each sub pie.
+            svg
+                .append("g")
+                .attr("transform", `translate(${width / 2}, ${height / 2})`) // Shift right for margin
+                .selectAll('text')
+                .data(arcs)
+                .join('text')
+                .attr("transform", d => `translate(${d['centroid']})`) // move to center of each pie
+                .attr('dx', -10)
+                .attr('dy', 10)
+                .text(d => d['data'].value)
+
+            // create a legend at right-top of canvas
+            const legend = svg
+                .append('g')
+                .attr("transform", `translate(${width - 100}, ${20})`)
+
+            // add each legend item
+            arcs.forEach((d, i) => {
+                const item = legend.append('g').attr('transform', `translate(0, ${i * 25})`)
+
+                // add cube with certain color.
+                item.append('rect')
+                    .attr('x', 0).attr('y', 0)
+                    .attr("width", 20).attr("height", 20)
+                    .attr('fill', colors[i])
+
+                // add legend text
+                item.append('text')
+                    .attr('x', 25).attr('y', 15)
+                    .text(`${arcs[i].data.name}`)
+
+            })
+        }
+
+
+        /**
+        * This function is used for draw a bar chart.
+        * @param {data} a list of dictionary, each of dictionary contains at least 2 keys: 
+        *    - name: string
+        *    - value: Number
+        * @param {svg_id} id of svg.
+        * @param {width} canvas height
+        * @param {height} canvas height
+        * @returns none.
+        */
+        function drawBar(data, svg_id, width, height) {
+            const svg = d3.select(svg_id)
+                .attr("width", width)
+                .attr("height", height)
+                .attr("viewBox", [0, 0, width, height])
+                .attr("style", "max-width: 100%; height: auto;");
+
+            var x_axis = d3.scaleLinear().domain([0, 100]).range([0, width - 100]);
+            var y_axis = d3.scaleLinear().domain([0, 100]).range([height - 100, 0]);
+
+            var mainGroup = svg.append("g").attr("transform", "translate(50, 50)");
+
+            // draw x axis and x label
+            mainGroup.append('g')
+                .attr("transform", `translate(0, ${height - 100})`)
+                .call(d3.axisBottom(x_axis).ticks(0).tickSizeOuter(0))
+                .call(
+                    (g) => g.append("text")
+                        .attr("x", width - 100)
+                        .attr("y", 30)
+                        .attr("fill", "black")
+                        .attr("text-anchor", "end")
+                        .attr("font-size", "20px")
+                        .text("Generation")
+                )
+            // draw y axis and y label
+            mainGroup.append('g')
+                .call(d3.axisLeft(y_axis))
+                .call(
+                    (g) => g.append("text")
+                        .attr("x", 100)
+                        .attr("y", -10)
+                        .attr("fill", "black")
+                        .attr("font-size", "20px")
+                        .text("Average Value")
+                )
+
+            const color = d3.scaleOrdinal(d3.schemeCategory10);
+            const GAP = 3;
+            const barWidth = x_axis(90 / data.length - GAP);
+            mainGroup
+                .append('g')
+                .selectAll()
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x", (d, i) => x_axis(5 + i * 90 / data.length))
+                .attr("y", (d, i) => y_axis(d['value']))
+                .attr("width", barWidth)
+                .attr("height", (d, i) => y_axis(100 - d['value']))
+                .attr('fill', (d, i) => color(i))
+
+
+            // create a legend at right-top of canvas
+            const legend = svg
+                .append('g')
+                .attr("transform", `translate(${width - 100}, ${20})`)
+
+            // add each legend item
+            data.forEach((d, i) => {
+                const item = legend.append('g').attr('transform', `translate(0, ${i * 25})`)
+
+                // add cube with certain color.
+                item.append('rect')
+                    .attr('x', 0).attr('y', 0)
+                    .attr("width", 20).attr("height", 20)
+                    .attr('fill', color(i))
+
+                // add legend text
+                item.append('text')
+                    .attr('x', 25).attr('y', 15)
+                    .text(d["name"])
+
+            })
+        }
+
+
+        /**
+        * This function is used for draw a parallel coordinate chart.
+        * @param {favorate_pokemon} a list of selectecd pokemon in csv file.
+        * @param {svg_id} id of svg.
+        * @param {width} canvas height
+        * @param {height} canvas height
+        * @returns none.
+        */
+        function drawParallelCoordinates(favorate_pokemon, svg_id, width, height) {
+            // set graph size.
+            const svg = d3.select(svg_id)
+                .attr("width", width)
+                .attr("height", height)
+                .attr("viewBox", [0, 0, width, height])
+                .attr("style", "max-width: 100%; height: auto;");
+
+            // create x axis and y axis
+            const property_array = ["HP", "Attack", "Defense", "Sp_Atk", "Sp_Def", "Speed", ""];
+            var x_axis = d3.scalePoint().domain(property_array).range([0, width - 200]);
+            var y_axis = d3.scaleLinear().domain([0, 160]).range([height - 200, 0]);
+
+            var mainGroup = svg.append("g").attr("transform", "translate(100, 100)");
+
+            // draw 6 vertical y axis
+            for (var r = 0; r < 6; r++) {
+                mainGroup
+                    .append("g")
+                    .attr("transform", `translate(${x_axis(property_array[r])}, 0)`)
+                    .call(d3.axisLeft(y_axis).ticks(10).tickSizeOuter(0))
+                    .style("font-size", "15px");
+            }
+
+            // draw 1 horizontal x axis
+            mainGroup
+                .append("g")
+                .attr("transform", `translate(0, ${height - 200})`)
+                .call(d3.axisBottom(x_axis))
+                .style("font-size", "20px");
+
+
+            // collect data into a 2D table, from csv file.
+            const points_table = [];
+            for (var pokemon of favorate_pokemon) {
+                const points_row = [];
+                points_row.push([x_axis("HP"), y_axis(parseInt(pokemon['HP']))]);
+                points_row.push([x_axis("Attack"), y_axis(parseInt(pokemon['Attack']))]);
+                points_row.push([x_axis("Defense"), y_axis(parseInt(pokemon['Defense']))]);
+                points_row.push([x_axis("Sp_Atk"), y_axis(parseInt(pokemon['Sp_Atk']))]);
+                points_row.push([x_axis("Sp_Def"), y_axis(parseInt(pokemon['Sp_Def']))]);
+                points_row.push([x_axis("Speed"), y_axis(parseInt(pokemon['Speed']))]);
+                points_table.push(points_row);
+            }
+
+            const color = d3.scaleOrdinal(d3.schemeCategory10);
+            for (var i = 0; i < favorate_pokemon.length; i++) {
+                const points_row = points_table[i];
+                // draw points
+                mainGroup
+                    .append("g")
+                    .selectAll()
+                    .data(points_row)
+                    .enter()
+                    .append('circle')
+                    .attr('cx', (d, i) => { return d[0]; })
+                    .attr('cy', (d, i) => { return d[1]; })
+                    .attr('r', 6)
+                    .attr('fill', color(i))
+
+                // draw the line connect adjacent points.
+                var points_str = "";
+                for (var r = 0; r < 6; r++) {
+                    points_str = points_str + `${points_row[r][0]},${points_row[r][1]} `;
+                }
+                mainGroup
+                    .append("g")
+                    .append("polyline")
+                    .attr('points', points_str)
+                    .attr('fill', 'none')
+                    .attr('stroke', color(i))
+                    .attr('stroke-width', 3)
+            }
+
+
+            // create a legend at right-top of canvas
+            const legend = mainGroup
+                .append('g')
+                .attr("transform", `translate(${width - 250}, ${20})`)
+
+            // add each legend item
+            favorate_pokemon.forEach((d, i) => {
+                const item = legend.append('g').attr('transform', `translate(0, ${i * 25})`)
+
+                // add cube with certain color.
+                item.append('rect')
+                    .attr('x', 0).attr('y', 0)
+                    .attr("width", 20).attr("height", 20)
+                    .attr('fill', color(i))
+
+                // add legend text
+                item.append('text')
+                    .attr('x', 25).attr('y', 15)
+                    .text(`${d["Name"]}`)
+
+            })
+        }
+
+        // draw 3 graph.
+        async function init() {
+
+            const winWidth = window.innerWidth;
+            const winHeight = window.innerHeight;
+
+            // load data from csv.
+            let csv = await d3.csv('pokemon_alopez247.csv');
+            console.log(csv)
+
+            //-----------------------------------------------------------------
+            //                   create pie chart 
+            //-----------------------------------------------------------------
+            const type_count_dict = {}
+
+            // count the number of pokemon of each type.
+            for (const record of csv) {
+                const type1 = record['Type_1'];
+                const type2 = record['Type_2'];
+
+                if (!(type1 in type_count_dict)) {
+                    type_count_dict[type1] = 0;
+                }
+                if (!(type2 in type_count_dict)) {
+                    type_count_dict[type2] = 0;
+                }
+                type_count_dict[type1] += 1;
+                type_count_dict[type2] += 1;
+            }
+
+            const type_count_list = []
+            for (const key in type_count_dict) {
+                if (key != "")
+                    type_count_list.push({ "name": key, "value": type_count_dict[key] })
+            }
+
+            // draw graph.
+            drawPie(type_count_list, "#graph1", winWidth, winWidth / 4 * 3)
+
+            //-----------------------------------------------------------------
+            //                   create bar chart 
+            //-----------------------------------------------------------------
+
+            // calcualte the average of max{Attack, Sp_Atk} of each generation.
+            const attack_dict = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] }
+            for (const record of csv) {
+                const gen = parseInt(record['Generation']);
+                const attack = parseInt(record['Attack']);
+                const sp_attack = parseInt(record['Sp_Atk']);
+                const max_atk = Math.max(attack, sp_attack);
+                attack_dict[gen].push(max_atk)
+            }
+            const attack_list = []
+
+            for (var i = 1; i <= 6; i++) {
+                const lst = attack_dict[i];
+                const average = lst.reduce((sum, n) => sum + n, 0) / lst.length;
+                attack_list.push({ "name": `gen ${i}`, "value": average })
+            }
+
+            // draw bar chart.
+            drawBar(attack_list, "#graph2", winWidth, winWidth / 4 * 3)
+
+            //-----------------------------------------------------------------
+            //          create parallel coordinate graph
+            //-----------------------------------------------------------------
+
+            // indices of my 10 favorate pokemons
+            const favorate_index = [123, 130, 214, 330, 376, 445, 448, 468, 609, 637];
+
+            const favorate_pokemon = [];
+            for (const record of csv) {
+                const number = parseInt(record['Number']);
+                if (favorate_index.indexOf(number) != -1) {
+                    favorate_pokemon.push(record);
+                }
+            }
+
+            // draw parallel coordinate graph
+            drawParallelCoordinates(favorate_pokemon, "#graph3", winWidth, winWidth / 4 * 3)
+        }
+
+        init();
+        // window.addEventListener('resize', init);
+    </script>
+
+</body>
+
+</html>
