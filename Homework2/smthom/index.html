@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dataset Visualization Dashboard</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: sans-serif;
+            overflow: hidden; /* prevent scrolling */
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); /* make sure rows can shrink/grow as needed */
+            height: 100vh;
+            width: 100vw;
+            /* make spacing greater */
+            gap: 15px; 
+            padding: 15px;
+        }
+
+        /* chart containers */
+        .chart-container {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: grid; /* WANTED TO USE QUADRANTS - found that grids help w that */
+            grid-template-rows: auto 1fr auto auto; 
+            position: relative;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .chart-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 5px; /* making it so that titles don't interfere w content */
+            grid-row: 1;
+        }
+
+        .chart-svg-container {
+             position: relative; /* ABS PARTITION of SVG */
+             width: 100%;
+             height: 100%;
+             grid-row: 2; /* new SVG container in row 2 */
+             display: flex; 
+             justify-content: center;
+             align-items: center;
+             min-height: 150px;
+         }
+
+         .chart-svg-container svg {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+         }
+
+
+        .chart-context {
+            font-size: 0.9em;
+            color: #555;
+            text-align: center;
+            margin-top: 5px;
+            grid-row: 3;
+        }
+
+        .legend {
+            font-size: 0.8em;
+            color: #333;
+            text-align: left;
+            padding: 5px;
+            margin-top: 5px;
+            border-top: 1px solid #eee; 
+            grid-row: 4;
+        }
+
+        /* ---- CHART DIAGRAMS ---- */
+        #chord path {
+            stroke: #000;
+            stroke-width: 0.25px;
+            fill-opacity: 0.7;
+        }
+        #chord text {
+            font-size: 5px;
+        }
+
+        #scatterplot circle {
+            opacity: 0.7;
+            stroke-width: 1px;
+            stroke: #333;
+        }
+        #scatterplot .axis path,
+        #scatterplot .axis line {
+            fill: none;
+            stroke: #aaa;
+            shape-rendering: crispEdges;
+        }
+         #scatterplot .axis text {
+             font-size: 10px;
+             fill: #555;
+         }
+         #scatterplot {
+            grid-column: 1 / span 2; /* scatterplot spans whole bottom row */
+         }
+
+
+        #starplot .axis {
+            stroke: grey;
+            stroke-width: 0.5px;
+        }
+        #starplot .scale-legend {
+            font-size: 10px;
+            fill: #555;
+        }
+        #starplot .axis-label {
+            font-size: 9px; 
+            text-anchor: middle;
+             fill: #333;
+        }
+        #starplot .star-polygon {
+            fill: steelblue;
+            fill-opacity: 0.5;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+
+        /* TOOLTIP */
+        .tooltip {
+            position: absolute;
+            visibility: hidden;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none; 
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="chord" class="chart-container">
+            <div class="chart-title">Parental Job Interconnections</div>
+            <div class="chart-svg-container"></div>
+            <div class="chart-context">Chord diagram illustrating the connections between mother's and father's occupations.</div>
+            <div class="legend">Each segment represents a parental job category. The arcs show the distribution of jobs, and the chords show the connections between mother's and father's jobs.</div>
+        </div>
+
+        <div id="starplot" class="chart-container">
+            <div class="chart-title">Average Student Attributes Star Plot</div>
+            <div class="chart-svg-container"></div>
+            <div class="chart-context">Star plot showing average values across key numeric attributes for all students.</div>
+            <div class="legend">Each axis represents an attribute. The length of the point along the axis indicates the average value for that attribute. Higher values extend further from the center.</div>
+        </div>
+        <div id="scatterplot" class="chart-container">
+            <div class="chart-title">Academic Performance Overview (G1 vs G3)</div>
+            <div class="chart-svg-container"></div>
+            <div class="chart-context">Scatter plot showing the relationship between first period grade (G1) and final grade (G3).</div>
+            <div class="legend">Each point represents a student. The x-axis shows the G1 score, and the y-axis shows the G3 score. Color indicates the desire to pursue higher education (Blue: Yes, Orange: No).</div>
+        </div>
+    </div>
+
+    <div class="tooltip"></div>
+
+    <script src="main.js"></script>
+</body>
+</html>
