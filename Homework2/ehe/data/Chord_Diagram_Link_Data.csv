@@ -1,0 +1,13 @@
+source,target,value,avg_cgpa
+All Three Conditions,High CGPA (≥ 3.50),5,3.75
+All Three Conditions,Low CGPA (≤ 2.99),1,2.75
+All Three Conditions,Medium CGPA (3.00 – 3.49),4,3.25
+No Condition,High CGPA (≥ 3.50),17,3.75
+No Condition,Low CGPA (≤ 2.99),5,1.9
+No Condition,Medium CGPA (3.00 – 3.49),15,3.25
+One Condition,High CGPA (≥ 3.50),17,3.75
+One Condition,Low CGPA (≤ 2.99),2,1.88
+One Condition,Medium CGPA (3.00 – 3.49),17,3.25
+Two Conditions,High CGPA (≥ 3.50),9,3.75
+Two Conditions,Low CGPA (≤ 2.99),2,2.75
+Two Conditions,Medium CGPA (3.00 – 3.49),7,3.25
