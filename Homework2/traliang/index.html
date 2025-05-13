@@ -1,0 +1,55 @@
+<!doctype html>
+<html style="width:100%;height:100%;">
+<head>
+	<meta charset="utf-8">
+	<title>Pokémon Dashboard</title>
+	<link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <header id="dashboard-header">
+        <h1>Pokémon Dashboard</h1>
+        <p>
+            For the Pokémon Dashboard, I chose to explore the statistics of Pokémon using three visualization: 
+            stack bar chart, radar chart, and a parallel coordinate plot. 
+        </p>
+        <p>
+          In the stacked bar chart, I choose to first give a general overview of the dataset by showing all of the types relative to their generation
+          This give us an overview of the different type distributions which tells us which Pokémon are more abudent or scarces. In addition,
+          I've added a hover tool to see the count of the total pokémon of the specific type in that generation for more clarity for the user
+        </p>
+        <p>
+            For the next graph, I've added a radar chart to show the stats of the individual pokémon to help to user find the specific pokemon stat. 
+            To make the chart feel more relevant I've made sure to make the radar chart relative to their highest stat total so that the polygon drawn doesn't 
+            feel weird for the user to see. To make the search easier, I've just created a drop down for the user to choose a specific pokemon
+        </p>
+        <p>
+            For the final chart, I've created a parallel coordinate plot for a more holistic view of the stat comparisons of all pokemon. To help the users focus
+            more on a specific pokemon I've gone ahead and added a search bar with an autocomplete function to help the user find a specific pokemon. 
+            This will allow the user to see the stat of the pokemon with bolded line to not overwhelm the user with all the colors. 
+        </p>
+    </header>
+
+    <div id="loading-overlay">
+        <div id="loading-text">Loading Pokémon Dashboard...</div>
+    </div>
+
+    <div id="tooltip"></div>
+
+    <div id="dashboard-container">
+        <div id="overview"></div>
+        <div id="view1">
+            <!-- Dropdown for Pokémon selection -->
+            <select id="pokemon-select"></select>
+            <svg></svg>
+        </div>
+        <div id="view2">
+            <input type="text" id="pokemon-search" placeholder="Search Pokémon..." autocomplete="off">
+            <ul id="pokemon-suggestions"></ul>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
