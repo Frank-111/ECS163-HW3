@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html style="width:100%;height:100%;">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="Pokemon Data Visualization">
+	<title>Pokemon Stats Dashboard</title>
+	<style>
+		body {
+			margin: 0;
+			font-family: Arial, sans-serif;
+			width: 100%;
+			height: 100%;
+		}
+		
+		#tooltip {
+			position: absolute;
+			background-color: white;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			padding: 10px;
+			pointer-events: none;
+			font-size: 12px;
+			box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+			opacity: 0;
+			z-index: 1000;
+		}
+		
+		svg {
+			width: 100%;
+			height: 100%;
+		}
+		
+		circle {
+			transition: all 0.2s ease;
+			cursor: pointer;
+		}
+		
+		rect {
+			transition: opacity 0.2s ease;
+		}
+	</style>
+</head>
+<body>
+	
+	<div id="tooltip"></div>
+	
+	<svg width="100%" height="100%"></svg>
+
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script src="main.js"></script>
+</body>
+</html>
